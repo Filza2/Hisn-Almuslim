@@ -8,7 +8,6 @@ def Stage_0():
 ╦ ╦┬┌─┐┌┐┌   ╔═╗╦  ┌┬┐╦ ╦╔═╗╦  ╦╔╦╗
 ╠═╣│└─┐│││───╠═╣║  │││║ ║╚═╗║  ║║║║
 ╩ ╩┴└─┘┘└┘   ╩ ╩╩═╝┴ ┴╚═╝╚═╝╩═╝╩╩ ╩
-
     By @TweakPY - @vv1ck\n''')
     Stage_1()
 def Stage_1():
@@ -20,10 +19,32 @@ def Stage_1():
 			"AUDIO_URL": "(.*?)",
 			"TEXT": "(.*?)"
 		}''',get('https://www.hisnmuslim.com/api/ar/husn_ar.json').text)
-        for ID,title,audio_url,text in Finder:
-            print(f'{ID} -  {title}')
-        ID=input('\n[?] ادخل رقم او ايدي الذكر المطلوب من القائمة بالاعلى: ')
-        Stage_2(ID)
+        Download=input('[?] هل تريد تنزيل جميع الاذكار الصوتية المتوفرة نعم او لا :')
+        if Download=='نعم':
+            print('\n')
+            for ID,title,audio_url,text in Finder:
+                try:
+                    Finder1=re.findall('''
+		{
+			"ID": '''+f"{ID}"+''',
+			"TITLE": "(.*?)",
+			"AUDIO_URL": "(.*?)",
+			"TEXT": "(.*?)"
+		}''',get('https://www.hisnmuslim.com/api/ar/husn_ar.json').text)[0]
+                    title=Finder1[0]
+                    mp3url=Finder1[1]
+                    fname=str(title)+".mp3" 
+                    with open(f'{fname}',"wb") as f:
+                        f.write(get(mp3url).content)
+                        print(f'[+] تم تحميل : [{title}]')
+                except Exception as e:print('[!] هناك مشكلة بالتنزيل  ');exit(3) 
+            print('\n[+] تم الانتهاء من تحميل جميع الملفات !')
+        elif Download=='لا':
+            print('\n')
+            for ID,title,audio_url,text in Finder:
+                print(f'{ID} -  {title}')
+            ID=input('\n[?] ادخل رقم او ايدي الذكر المطلوب من القائمة بالاعلى: ')
+            Stage_2(ID)
     except Exception as e:print('[!] هناك مشكلة بالمرحلة رقم 1 ');exit(1)
 def Stage_2(ID):
     try:
@@ -42,3 +63,7 @@ def Stage_2(ID):
             print('[+] تم الانتهاء من تحميل مقطع صوتي للذكر المطلوب')
     except Exception as e:print('[!] هناك مشكلة بالمرحلة رقم 2 ');exit(2) 
 Stage_0()
+
+
+
+
